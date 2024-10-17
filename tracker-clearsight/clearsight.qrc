@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>clearsight_logo.png</file>
+    </qresource>
+</RCC>
