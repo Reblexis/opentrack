@@ -1,27 +1,51 @@
-# The Eyeware Beam SDK can be found at https://beam.eyeware.tech/developers/
-# The latest version can be downloaded at https://eyewarecistorage.blob.core.windows.net/beam-sdk/BeamSDK-Windows64-1.1.0.zip
-set(SDK_EYEWARE_BEAM "" CACHE PATH "Eyeware Beam SDK path")
-if(WIN32 AND SDK_EYEWARE_BEAM)
-    if(MSVC)
+# Set the Clearsight SDK path
+set(SDK_CLEARSIGHT "" CACHE PATH "Clearsight SDK path")
+
+if(SDK_CLEARSIGHT)
+    # Define the module for the Clearsight tracker
+    otr_module(tracker-clearsight)
+
+    # Compiler options for MSVC on Windows
+    if(WIN32 AND MSVC)
         add_compile_options(-EHsc)
     endif()
-    otr_module(tracker-eyeware-beam)
 
+    # Determine architecture (32-bit or 64-bit)
     if("${CMAKE_SIZEOF_VOID_P}" STREQUAL "4")
         set(arch "x86")
     else()
         set(arch "x64")
     endif()
 
-    target_include_directories(${self} SYSTEM PRIVATE "${SDK_EYEWARE_BEAM}/API/cpp/include")
-    target_link_directories(${self} PRIVATE "${SDK_EYEWARE_BEAM}/API/cpp/lib/${arch}")
-    set(dll "${SDK_EYEWARE_BEAM}/API/cpp/lib/${arch}/tracker_client.dll")
-    set(lib tracker_client.lib)
+    # Include directories
+    target_include_directories(${self} SYSTEM PRIVATE "${SDK_CLEARSIGHT}/include")
 
-    #message(${self})
-    #message(${dll})
-    #message(${lib})
+    # Platform-specific library settings
+    if(WIN32)
+        # Windows settings
+        target_link_directories(${self} PRIVATE "${SDK_CLEARSIGHT}/lib/${arch}")
+        set(lib_name clearsight_client)
+        set(lib ${lib_name}.lib)
+        set(dll "${SDK_CLEARSIGHT}/bin/${arch}/${lib_name}.dll")
+        target_link_libraries(${self} ${lib})
 
-    target_link_libraries(${self} ${lib})
-    install(FILES ${dll} DESTINATION ${opentrack-libexec})
+        # Install the DLL
+        install(FILES ${dll} DESTINATION ${opentrack-libexec})
+    elseif(APPLE)
+        # macOS settings
+        target_link_directories(${self} PRIVATE "${SDK_CLEARSIGHT}/lib/${arch}")
+        set(lib_name clearsight_client)
+        set(lib lib${lib_name}.dylib)
+        target_link_libraries(${self} ${lib})
+
+        install(FILES "${SDK_CLEARSIGHT}/lib/${arch}/${lib}" DESTINATION ${opentrack-libexec})
+    else()
+        # Linux or other UNIX-like systems
+        target_link_directories(${self} PRIVATE "${SDK_CLEARSIGHT}/lib/${arch}")
+        set(lib_name clearsight_client)
+        set(lib lib${lib_name}.so)
+        target_link_libraries(${self} ${lib})
+
+        install(FILES "${SDK_CLEARSIGHT}/lib/${arch}/${lib}" DESTINATION ${opentrack-libexec})
+    endif()
 endif()
