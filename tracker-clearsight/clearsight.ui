@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>eyeware_beam_ui</class>
- <widget class="QWidget" name="eyeware_beam_ui">
+ <class>clearsight_ui</class>
+ <widget class="QWidget" name="clearsight_ui">
   <property name="windowModality">
    <enum>Qt::NonModal</enum>
   </property>
@@ -20,11 +20,11 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Eyeware Beam</string>
+   <string>Clearsight</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="eyeware_beam.qrc">
-    <normaloff>:/images/eyeware_beam_logo.png</normaloff>:/images/eyeware_beam_logo.png</iconset>
+   <iconset resource="clearsight.qrc">
+    <normaloff>:/images/clearsight_logo.png</normaloff>:/images/clearsight_logo.png</iconset>
   </property>
   <property name="layoutDirection">
    <enum>Qt::LeftToRight</enum>
@@ -52,8 +52,8 @@
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Please make sure the Eyeware Beam application is running and tracking is active.&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;To download, visit &lt;a href=&quot;https://beam.eyeware.tech/opentrack&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://beam.eyeware.tech/opentrack&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Please make sure the Clearsight application is running and tracking is active.&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;To download, visit &lt;a href=&quot;https://beam.eyeware.tech/opentrack&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://beam.eyeware.tech/opentrack&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string> <!-- TODO: update link -->
         </property>
         <property name="openExternalLinks">
          <bool>true</bool>
@@ -79,7 +79,7 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <resources>
-  <include location="eyeware_beam.qrc"/>
+  <include location="clearsight.qrc"/>
  </resources>
  <connections/>
  <slots>

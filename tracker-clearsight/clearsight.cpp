@@ -5,7 +5,7 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#include "eyeware_beam.h"
+#include "clearsight.h"
 
 #include <QMutexLocker>
 
@@ -13,18 +13,18 @@ static constexpr double rad_to_deg = 180.0 / M_PI;
 static constexpr double m_to_cm = 100.0;
 static constexpr double epsilon = 0.000001;
 
-eyeware_beam_tracker::eyeware_beam_tracker()
+eyeware_beam_tracker::clearsight_beam_tracker()
 {
 }
 
-eyeware_beam_tracker::~eyeware_beam_tracker()
+eyeware_beam_tracker::~clearsight_beam_tracker()
 {
     QMutexLocker lck(&mtx);
     release_tracker_instance(tracker_client);
     tracker_client = nullptr;
 }
 
-module_status eyeware_beam_tracker::start_tracker(QFrame* videoframe)
+module_status clearsight_beam_tracker::start_tracker(QFrame* videoframe)
 {
     QMutexLocker lck(&mtx);
     try
@@ -39,7 +39,7 @@ module_status eyeware_beam_tracker::start_tracker(QFrame* videoframe)
     return status_ok();
 }
 
-void eyeware_beam_tracker::extract_translation(const eyeware::Vector3D& t,
+void clearsight_beam_tracker::extract_translation(const eyeware::Vector3D& t,
                                                double& translation_x_cm,
                                                double& translation_y_cm,
                                                double& translation_z_cm)

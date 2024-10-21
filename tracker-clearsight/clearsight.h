@@ -9,20 +9,20 @@
 
 #include "api/plugin-api.hpp"
 
-#include "ui_eyeware_beam.h"
+#include "ui_clearsight.h" // TODO: ??
 
-#include "eyeware/tracker_client.h"
+#include "clearsight/tracker_client.h"
 
 #include <QObject>
 #include <QMutex>
 
-class eyeware_beam_tracker : public QObject, public ITracker
+class clearsight_tracker : public QObject, public ITracker
 {
     Q_OBJECT
 
 public:
-    eyeware_beam_tracker();
-    ~eyeware_beam_tracker() override;
+    clearsight_tracker();
+    ~clearsight_tracker() override;
     module_status start_tracker(QFrame* frame) override;
     void data(double *data) override;
 
@@ -33,7 +33,7 @@ private:
                              double& translation_z_cm);
     void extract_rotation_angles(const eyeware::Matrix3x3& R, double& pitch_deg, double& roll_deg, double& yaw_deg);
 
-    eyeware::TrackerClient* tracker_client = nullptr;
+    clearsight::TrackerClient* tracker_client = nullptr;
 
     QMutex mtx;
 
@@ -45,26 +45,26 @@ private:
     double last_translation_z_cm = 0.0;
 };
 
-class eyeware_beam_dialog : public ITrackerDialog
+class clearsight_dialog : public ITrackerDialog
 {
     Q_OBJECT
 
 public:
-    eyeware_beam_dialog();
-    void register_tracker(ITracker * x) override { tracker = static_cast<eyeware_beam_tracker*>(x); }
+    clearsight_dialog();
+    void register_tracker(ITracker * x) override { tracker = static_cast<clearsight_tracker*>(x); }
     void unregister_tracker() override { tracker = nullptr; }
 
 private:
-    Ui::eyeware_beam_ui ui;
-    eyeware_beam_tracker* tracker = nullptr;
+    Ui::clearsight_ui ui;
+    clearsight_tracker* tracker = nullptr;
 
 private Q_SLOTS:
     void doOK();
 };
 
-class eyeware_beam_metadata : public Metadata
+class clearsight_metadata : public Metadata
 {
     Q_OBJECT
-    QString name() override { return QString("Eyeware Beam"); }
-    QIcon icon() override { return QIcon(":/images/eyeware_beam_logo.png"); }
+    QString name() override { return QString("Clearsight"); }
+    QIcon icon() override { return QIcon(":/images/clearsight_logo.png"); }
 };
