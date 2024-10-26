@@ -36,15 +36,16 @@ if(SDK_CLEARSIGHT)
         # macOS settings
         target_link_directories(${self} PRIVATE "${SDK_CLEARSIGHT}/lib/macos/${arch}")
         set(lib_name clearsight_client)
-        set(lib ${lib_name}.dylib)
+        set(lib lib${lib_name}.dylib)
         target_link_libraries(${self} ${lib})
 
         install(FILES "${SDK_CLEARSIGHT}/lib/macos/${arch}/${lib}" DESTINATION ${opentrack-libexec})
     else()
         # Linux or other UNIX-like systems
+        message("Arch: ${arch}")
         target_link_directories(${self} PRIVATE "${SDK_CLEARSIGHT}/lib/linux/${arch}")
         set(lib_name clearsight_client)
-        set(lib ${lib_name}.so)
+        set(lib lib${lib_name}.so)
         target_link_libraries(${self} ${lib})
 
         install(FILES "${SDK_CLEARSIGHT}/lib/linux/${arch}/${lib}" DESTINATION ${opentrack-libexec})
