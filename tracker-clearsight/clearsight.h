@@ -11,7 +11,7 @@
 
 #include "ui_clearsight.h" // TODO: ??
 
-#include "clearsight/tracker_client.h"
+#include "clearsight/clearsight_client.hpp" // TODO: Is this correct import?
 
 #include <QObject>
 #include <QMutex>
@@ -27,13 +27,7 @@ public:
     void data(double *data) override;
 
 private:
-    void extract_translation(const eyeware::Vector3D& t,
-                             double& translation_x_cm,
-                             double& translation_y_cm,
-                             double& translation_z_cm);
-    void extract_rotation_angles(const eyeware::Matrix3x3& R, double& pitch_deg, double& roll_deg, double& yaw_deg);
-
-    clearsight::TrackerClient* tracker_client = nullptr;
+    clearsight::ClearsightClient* client = nullptr;
 
     QMutex mtx;
 
