@@ -11,7 +11,7 @@
 
 #include "ui_clearsight.h" // TODO: ??
 
-#include "clearsight/clearsight_client.hpp" // TODO: Is this correct import?
+#include "clearsight_client.hpp" // TODO: Is this correct import?
 
 #include <QObject>
 #include <QMutex>
@@ -27,8 +27,7 @@ public:
     void data(double *data) override;
 
 private:
-    clearsight::ClearsightClient* client = nullptr;
-
+    ClearsightClient client;
     QMutex mtx;
 
     double last_pitch_deg = 0.0;

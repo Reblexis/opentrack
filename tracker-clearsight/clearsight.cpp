@@ -11,15 +11,14 @@
 
 constexpr double rad_to_deg = 180.0 / M_PI;
 
-clearsight_tracker::clearsight_tracker()
+clearsight_tracker::clearsight_tracker(): client("127.0.0.1", 8692)
 {
 }
 
 clearsight_tracker::~clearsight_tracker()
 {
     QMutexLocker lck(&mtx);
-    release_tracker_instance(client);
-    client = nullptr;
+    client.closeConnection();
 }
 
 module_status clearsight_tracker::start_tracker(QFrame* videoframe)
@@ -27,7 +26,7 @@ module_status clearsight_tracker::start_tracker(QFrame* videoframe)
     QMutexLocker lck(&mtx);
     try
     {
-        client = ClearsightTracker("127.0.0.1", 8692);
+        client.connectToServer();
     }
     catch (...)
     {
@@ -41,7 +40,7 @@ void clearsight_tracker::data(double *data)
 {
      QMutexLocker lck(&mtx);
 
-     TrackingData tracking_info = get_head_pose_info(tracker_client);
+     TrackingData tracking_info = client.getLatestData();
      if (tracking_info.is_valid)
      {
          last_yaw_deg = tracking_info.head_yaw * rad_to_deg;

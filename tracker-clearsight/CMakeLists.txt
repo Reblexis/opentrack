@@ -18,6 +18,7 @@ if(SDK_CLEARSIGHT)
     endif()
 
     # Include directories
+    message("SDK_CLEARSIGHT is set to: ${SDK_CLEARSIGHT}")
     target_include_directories(${self} SYSTEM PRIVATE "${SDK_CLEARSIGHT}/include")
 
     # Platform-specific library settings
