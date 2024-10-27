@@ -53,7 +53,7 @@ void clearsight_tracker::data(double *data)
      }
 
      data[TX] = last_translation_x_cm;
-     data[TY] = -last_translation_y_cm; // TODO: Translation as in movement or current position?
+     data[TY] = -last_translation_y_cm;
      data[TZ] = last_translation_z_cm;
      data[Yaw] = last_yaw_deg;
      data[Pitch] = last_pitch_deg;
