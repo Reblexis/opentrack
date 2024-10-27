@@ -43,13 +43,17 @@ void clearsight_tracker::data(double *data)
      TrackingData tracking_info = client.getLatestData();
      if (tracking_info.is_valid)
      {
-         last_yaw_deg = tracking_info.head_yaw * rad_to_deg;
-         last_pitch_deg = tracking_info .head_pitch * rad_to_deg;
-         last_roll_deg = tracking_info.head_roll * rad_to_deg;
+        last_yaw_deg = tracking_info.head_yaw * rad_to_deg;
+        last_pitch_deg = tracking_info.head_pitch * rad_to_deg;
+        last_roll_deg = tracking_info.head_roll * rad_to_deg;
+        last_translation_x_cm = tracking_info.eye_x;
+        last_translation_y_cm = tracking_info.eye_y;
+        last_translation_z_cm = tracking_info.eye_z;
+        //std::cout<<"eye_z: "<<tracking_info.eye_z<<std::endl;
      }
 
      data[TX] = last_translation_x_cm;
-     data[TY] = last_translation_y_cm; // TODO: Translation as in movement or current position?
+     data[TY] = -last_translation_y_cm; // TODO: Translation as in movement or current position?
      data[TZ] = last_translation_z_cm;
      data[Yaw] = last_yaw_deg;
      data[Pitch] = last_pitch_deg;
