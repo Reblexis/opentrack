@@ -1,0 +1,20 @@
+## Linux (from linux)
+```bash
+cd src/external/opentrack
+mkdir build
+cd build
+cmake ..
+make
+make install
+```
+
+## Windows (from linux)
+```
+cd src/external/opentrack
+mkdir build
+cd build
+cmake ..
+~/src/mxe/usr/bin/i686-w64-mingw32.static-qmake-qt5
+make
+make install
+```
