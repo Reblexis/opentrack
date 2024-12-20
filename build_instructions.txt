@@ -9,12 +9,16 @@ make install
 ```
 
 ## Windows (from linux)
+You need mxe cross-compilation environment.
+```bash
+~/src/mxe/usr/i686-w64-mingw32.static/qt5/bin/qmake   -project  -spec win32-g++     INCLUDEPATH+=/home/cihalvi/src/mxe/usr/i686-w64-mingw32.static/qt5/include     LIBS+=-/home/cihalvi/src/mxe/usr/i686-w64-mingw32.static/qt5/lib
 ```
-cd src/external/opentrack
-mkdir build
-cd build
-cmake ..
-~/src/mxe/usr/bin/i686-w64-mingw32.static-qmake-qt5
+then possibly add QT += core gui widgets network
+then run
+```bash
+~/src/mxe/usr/i686-w64-mingw32.static/qt5/bin/qmake   -makefile  -spec win32-g++     INCLUDEPATH+=/home/cihalvi/src/mxe/usr/i686-w64-mingw32.static/qt5/include     LIBS+=-/home/cihalvi/src/mxe/usr/i686-w64-mingw32.static/qt5/lib
+```
+then run
 make
 make install
 ```
