@@ -7,6 +7,7 @@
  */
 
 #include "compat/library-path.hpp"
+#include "compat/macros.h"
 
 #include "ftnoir_protocol_ft.h"
 #include "csv/csv.h"
@@ -19,6 +20,8 @@
 #include <windows.h>
 #else
 #include <atomic>
+#include <cstdint>
+    using LONG = std::int32_t;
 #endif
 
 freetrack::~freetrack()
@@ -47,45 +50,39 @@ static_assert(sizeof(LONG) == sizeof(std::int32_t));
 static_assert(sizeof(LONG) == 4u);
 #endif
 
-never_inline void store(float volatile& place, const float value)
+void store(volatile float& place, float value)
 {
-    union
-    {
-        float f32;
-        std::int32_t i32;
-    } value_ {};
-
-    value_.f32 = value;
-
-    static_assert(sizeof(value_) == sizeof(float));
-    static_assert(offsetof(decltype(value_), f32) == offsetof(decltype(value_), i32));
-
 #ifdef _WIN32
-    (void)InterlockedExchange((LONG volatile*)&place, value_.i32);
-#else
     std::atomic<std::int32_t>* atomic_place = reinterpret_cast<std::atomic<std::int32_t>*>(&place);
-    atomic_place->store(value_.i32, std::memory_order_release);
+    atomic_place->store(*reinterpret_cast<std::int32_t*>(&value), std::memory_order_release);
+#else
+    // Use memcpy to avoid strict aliasing violations
+    std::int32_t tmp;
+    memcpy(&tmp, &value, sizeof(tmp));
+    std::atomic<std::int32_t>* atomic_place = reinterpret_cast<std::atomic<std::int32_t>*>(const_cast<float*>(&place));
+    atomic_place->store(tmp, std::memory_order_release);
 #endif
 }
 
 template<typename t>
-static void store(t volatile& place, t value)
+void store(volatile t& place, t value)
 {
-    static_assert(sizeof(t) == 4u);
 #ifdef _WIN32
-    (void)InterlockedExchange((LONG volatile*) &place, (LONG)value);
-#else
     std::atomic<std::int32_t>* atomic_place = reinterpret_cast<std::atomic<std::int32_t>*>(&place);
+    atomic_place->store(value, std::memory_order_release);
+#else
+    std::atomic<std::int32_t>* atomic_place = reinterpret_cast<std::atomic<std::int32_t>*>(const_cast<t*>(&place));
     atomic_place->store(value, std::memory_order_release);
 #endif
 }
 
-static std::int32_t load(std::int32_t volatile& place)
+std::int32_t load(volatile std::int32_t& place)
 {
 #ifdef _WIN32
-    return InterlockedCompareExchange((volatile LONG*) &place, 0, 0);
-#else
     std::atomic<std::int32_t>* atomic_place = reinterpret_cast<std::atomic<std::int32_t>*>(&place);
+    return atomic_place->load(std::memory_order_acquire);
+#else
+    std::atomic<std::int32_t>* atomic_place = reinterpret_cast<std::atomic<std::int32_t>*>(const_cast<std::int32_t*>(&place));
     return atomic_place->load(std::memory_order_acquire);
 #endif
 }
@@ -139,7 +136,7 @@ void freetrack::pose(const double* headpose, const double* raw)
         {
             // FTHeap pMemData happens to be aligned on a page boundary by virtue of
             // memory mapping usage (MS Windows equivalent of mmap(2)).
-            static_assert((offsetof(FTHeap, table) & (sizeof(LONG)-1)) == 0);
+            static_assert((offsetof(FTHeap, table) & (sizeof(std::int32_t)-1)) == 0);
 
             for (unsigned k = 0; k < 2; k++)
                 store(pMemData->table_ints[k], t.ints[k]);
@@ -157,7 +154,14 @@ void freetrack::pose(const double* headpose, const double* raw)
         connected_game = gamename;
     }
     else
+    {
+#ifdef _WIN32
         (void)InterlockedAdd((LONG volatile*)&data->DataID, 1);
+#else
+        std::atomic<std::int32_t>* atomic_id = reinterpret_cast<std::atomic<std::int32_t>*>(const_cast<std::uint32_t*>(&data->DataID));
+        atomic_id->fetch_add(1, std::memory_order_release);
+#endif
+    }
 }
 
 QString freetrack::game_name()
