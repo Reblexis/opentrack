@@ -13,16 +13,18 @@
 #include <QProcess>
 #include <QString>
 #include <QMutex>
-
 #include <QDebug>
-
 #include <cinttypes>
 #include "freetrackclient/fttypes.h"
-
 #include "compat/shm.h"
 #include "options/options.hpp"
-
 #include <memory>
+
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <atomic>
+#endif
 
 using namespace options;
 

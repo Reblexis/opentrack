@@ -14,7 +14,12 @@
 
 #include <cstddef>
 #include <cmath>
+
+#ifdef _WIN32
 #include <windows.h>
+#else
+#include <atomic>
+#endif
 
 freetrack::~freetrack()
 {
@@ -37,15 +42,17 @@ freetrack::~freetrack()
         dummyTrackIR.close();
 }
 
+#ifdef _WIN32
 static_assert(sizeof(LONG) == sizeof(std::int32_t));
 static_assert(sizeof(LONG) == 4u);
+#endif
 
 never_inline void store(float volatile& place, const float value)
 {
     union
     {
         float f32;
-        LONG i32;
+        std::int32_t i32;
     } value_ {};
 
     value_.f32 = value;
@@ -53,19 +60,34 @@ never_inline void store(float volatile& place, const float value)
     static_assert(sizeof(value_) == sizeof(float));
     static_assert(offsetof(decltype(value_), f32) == offsetof(decltype(value_), i32));
 
+#ifdef _WIN32
     (void)InterlockedExchange((LONG volatile*)&place, value_.i32);
+#else
+    std::atomic<std::int32_t>* atomic_place = reinterpret_cast<std::atomic<std::int32_t>*>(&place);
+    atomic_place->store(value_.i32, std::memory_order_release);
+#endif
 }
 
 template<typename t>
 static void store(t volatile& place, t value)
 {
     static_assert(sizeof(t) == 4u);
+#ifdef _WIN32
     (void)InterlockedExchange((LONG volatile*) &place, (LONG)value);
+#else
+    std::atomic<std::int32_t>* atomic_place = reinterpret_cast<std::atomic<std::int32_t>*>(&place);
+    atomic_place->store(value, std::memory_order_release);
+#endif
 }
 
 static std::int32_t load(std::int32_t volatile& place)
 {
+#ifdef _WIN32
     return InterlockedCompareExchange((volatile LONG*) &place, 0, 0);
+#else
+    std::atomic<std::int32_t>* atomic_place = reinterpret_cast<std::atomic<std::int32_t>*>(&place);
+    return atomic_place->load(std::memory_order_acquire);
+#endif
 }
 
 void freetrack::pose(const double* headpose, const double* raw)
@@ -145,7 +167,11 @@ QString freetrack::game_name()
 }
 
 void freetrack::start_dummy() {
+#ifdef _WIN32
     static const QString program = OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH "TrackIR.exe";
+#else
+    static const QString program = OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH "trackir-compat";
+#endif
     dummyTrackIR.setProgram("\"" + program + "\"");
     dummyTrackIR.start();
 }
@@ -177,6 +203,7 @@ module_status freetrack::set_protocols()
     {
         bool copy = true;
 
+#ifdef _WIN32
         if (use_npclient && !QFile{location + "/NPClient.dll"}.exists())
             copy &= QFile::copy(program_dir + "/NPClient.dll", location + "/NPClient.dll");
         if (use_npclient && !QFile{location + "/NPClient64.dll"}.exists())
@@ -185,6 +212,16 @@ module_status freetrack::set_protocols()
             copy &= QFile::copy(program_dir + "/freetrackclient.dll", location + "/freetrackclient.dll");
         if (use_freetrack && !QFile{location + "/freetrackclient64.dll"}.exists())
             copy &= QFile::copy(program_dir + "/freetrackclient64.dll", location + "/freetrackclient64.dll");
+#else
+        if (use_npclient && !QFile{location + "/libnpclient.so"}.exists())
+            copy &= QFile::copy(program_dir + "/libnpclient.so", location + "/libnpclient.so");
+        if (use_npclient && !QFile{location + "/libnpclient64.so"}.exists())
+            copy &= QFile::copy(program_dir + "/libnpclient64.so", location + "/libnpclient64.so");
+        if (use_freetrack && !QFile{location + "/libfreetrackclient.so"}.exists())
+            copy &= QFile::copy(program_dir + "/libfreetrackclient.so", location + "/libfreetrackclient.so");
+        if (use_freetrack && !QFile{location + "/libfreetrackclient64.so"}.exists())
+            copy &= QFile::copy(program_dir + "/libfreetrackclient64.so", location + "/libfreetrackclient64.so");
+#endif
 
         if (!copy)
             return {tr("Can't copy library to selected custom location '%1'").arg(s.custom_location_pathname)};
