@@ -46,7 +46,7 @@ struct OTR_LOGIC_EXPORT key_opts
 struct OTR_LOGIC_EXPORT module_settings
 {
     bundle b { make_bundle("modules") };
-    value<QString> tracker_dll { b, "tracker-dll", "pt" };
+    value<QString> tracker_dll { b, "tracker-dll", "clearsight" };
     value<QString> filter_dll { b, "filter-dll", "accela" };
     value<QString> protocol_dll { b, "protocol-dll", "freetrack" };
     module_settings();

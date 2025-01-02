@@ -102,6 +102,12 @@ See [WARRANTY.txt](WARRANTY.txt) for applying warranty terms (that is, disclaimi
 
 The code is held to a high-quality standard and written with utmost care; consider this a promise without legal value. Despite doing the best we can not to injure users' equipment, software developers don't want to be dragged to courts for imagined or real issues. Disclaiming warranty is a standard practice in the field, even for expensive software like operating systems.
 
+### Contribution licensing
+
+This repository is based on [https://github.com/opentrack/opentrack], which is licensed under the previously mentioned licenses.
+
+The contributions made by [Viktor Cihal] are licensed under the MIT License. See `CONTRIBUTIONS_LICENSE` or `NOTICE` for details.
+
 ## Building opentrack from source
 
 On Windows, use either mingw-w64 or MS Visual Studio 2015 Update 3/newer. On other platforms use GNU or LLVM. Refer to [Visual C++ 2015 build instructions](https://github.com/opentrack/opentrack/wiki/Building-under-MS-Visual-C---2017-and-later).

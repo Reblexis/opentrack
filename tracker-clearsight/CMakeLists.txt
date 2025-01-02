@@ -1,7 +1,9 @@
 # tracker-clearsight/CMakeLists.txt
 
 # Set the Clearsight SDK path
-set(SDK_CLEARSIGHT "" CACHE PATH "Clearsight SDK path")
+if(NOT DEFINED SDK_CLEARSIGHT)
+    set(SDK_CLEARSIGHT $ENV{SDK_CLEARSIGHT} CACHE PATH "Clearsight SDK path")
+endif()
 
 if(SDK_CLEARSIGHT)
     # Define the module for the Clearsight tracker
